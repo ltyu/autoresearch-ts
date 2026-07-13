@@ -12,8 +12,9 @@ export function mergeIntervals(intervals: readonly Interval[]): Interval[] {
   const n = intervals.length;
   if (n === 0) return [];
 
-  // Pack (start, originalIndex) into one number so the sort comparator is a
-  // plain numeric subtraction with no tuple property access.
+  // Sort by packing (start, originalIndex) into one number per interval and
+  // sorting a typed array: its default numeric sort has no per-compare callback,
+  // and start in the high digits (index in the low) orders the intervals by start.
   let minStart = intervals[0][0];
   let maxStart = intervals[0][0];
   for (let i = 1; i < n; i++) {
