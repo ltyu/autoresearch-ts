@@ -19,11 +19,11 @@ export function mergeIntervals(intervals: readonly Interval[]): Interval[] {
     const s = intervals[i][0];
     if (s < minStart) minStart = s;
   }
-  const keys = new Array<number>(n);
+  const keys = new Float64Array(n);
   for (let i = 0; i < n; i++) {
     keys[i] = (intervals[i][0] - minStart) * n + i;
   }
-  keys.sort((a, b) => a - b);
+  keys.sort(); // typed-array default sort is numeric ascending, no comparator callback
 
   const merged: Interval[] = [];
   let last: Interval | undefined;
