@@ -9,17 +9,20 @@ import type { Interval } from "../types/experiment.ts";
  * - Must not mutate the input array or the intervals inside it.
  */
 export function mergeIntervals(intervals: readonly Interval[]): Interval[] {
-  const sorted = intervals
-    .map((interval) => ({ start: interval[0], end: interval[1] }))
-    .sort((a, b) => a.start - b.start || a.end - b.end);
+  const n = intervals.length;
+  if (n === 0) return [];
 
-  let merged: Interval[] = [];
-  for (const { start, end } of sorted) {
-    const last = merged[merged.length - 1];
-    if (last !== undefined && start <= last[1]) {
-      merged = [...merged.slice(0, -1), [last[0], Math.max(last[1], end)]];
+  const sorted = intervals.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+
+  const merged: Interval[] = [];
+  let last: Interval | undefined;
+  for (let i = 0; i < n; i++) {
+    const iv = sorted[i];
+    if (last !== undefined && iv[0] <= last[1]) {
+      if (iv[1] > last[1]) last[1] = iv[1];
     } else {
-      merged = [...merged, [start, end]];
+      last = [iv[0], iv[1]];
+      merged.push(last);
     }
   }
   return merged;
