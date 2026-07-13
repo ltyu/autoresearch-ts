@@ -15,11 +15,16 @@ export function mergeIntervals(intervals: readonly Interval[]): Interval[] {
   // Pack (start, originalIndex) into one number so the sort comparator is a
   // plain numeric subtraction with no tuple property access.
   let minStart = intervals[0][0];
+  let maxStart = intervals[0][0];
   for (let i = 1; i < n; i++) {
     const s = intervals[i][0];
     if (s < minStart) minStart = s;
+    else if (s > maxStart) maxStart = s;
   }
-  const keys = new Float64Array(n);
+  // Packed key = (start - minStart) * n + i. Use a 32-bit integer sort when the
+  // largest key fits, otherwise fall back to Float64 (exact up to 2^53).
+  const keys =
+    (maxStart - minStart) * n + n <= 0xffffffff ? new Uint32Array(n) : new Float64Array(n);
   for (let i = 0; i < n; i++) {
     keys[i] = (intervals[i][0] - minStart) * n + i;
   }
