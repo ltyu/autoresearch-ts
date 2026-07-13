@@ -1,0 +1,16 @@
+{
+  "name": "autoresearch-ts",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "experiment": "tsx harness/run.ts",
+    "verify": "tsx harness/verify.ts",
+    "bench": "tsx harness/bench.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "tsx": "^4",
+    "typescript": "^5"
+  }
+}
