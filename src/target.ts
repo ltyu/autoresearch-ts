@@ -12,7 +12,7 @@ export function mergeIntervals(intervals: readonly Interval[]): Interval[] {
   const n = intervals.length;
   if (n === 0) return [];
 
-  const sorted = intervals.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+  const sorted = intervals.slice().sort((a, b) => a[0] - b[0]);
 
   const merged: Interval[] = [];
   let last: Interval | undefined;
