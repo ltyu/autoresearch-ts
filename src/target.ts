@@ -12,12 +12,23 @@ export function mergeIntervals(intervals: readonly Interval[]): Interval[] {
   const n = intervals.length;
   if (n === 0) return [];
 
-  const sorted = intervals.slice().sort((a, b) => a[0] - b[0]);
+  // Pack (start, originalIndex) into one number so the sort comparator is a
+  // plain numeric subtraction with no tuple property access.
+  let minStart = intervals[0][0];
+  for (let i = 1; i < n; i++) {
+    const s = intervals[i][0];
+    if (s < minStart) minStart = s;
+  }
+  const keys = new Array<number>(n);
+  for (let i = 0; i < n; i++) {
+    keys[i] = (intervals[i][0] - minStart) * n + i;
+  }
+  keys.sort((a, b) => a - b);
 
   const merged: Interval[] = [];
   let last: Interval | undefined;
-  for (let i = 0; i < n; i++) {
-    const iv = sorted[i];
+  for (let k = 0; k < n; k++) {
+    const iv = intervals[keys[k] % n];
     if (last !== undefined && iv[0] <= last[1]) {
       if (iv[1] > last[1]) last[1] = iv[1];
     } else {
